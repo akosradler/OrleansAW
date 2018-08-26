@@ -27,7 +27,14 @@ namespace OrleansAW.Host
                 //.ConfigureEndpoints(IPAddress.Loopback, siloPort: 11111, gatewayPort: 30000)
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IStartupGrain).Assembly).WithReferences())
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(StartupGrain).Assembly).WithReferences())
-                .ConfigureLogging(logging => logging.AddConsole());
+                .ConfigureLogging(logging => logging.AddConsole())
+                .UseDashboard(options =>
+                {
+                    options.Host = "*";
+                    options.Port = 8080;
+                    options.HostSelf = true;
+                    options.CounterUpdateIntervalMs = 1000;
+                });
 
             var silo = builder.Build();
             silo.StartAsync().Wait();

@@ -26,16 +26,6 @@ namespace API.Controllers
            var startupGrain = _client.GetGrain<IStartupGrain>(0);
             await startupGrain.KeepAlive();
             return "Your API is running!";
-        }
-
-        [HttpGet]
-        [Route("Customer")]
-        public async Task<ActionResult<Customer>> GetCustormer()
-        {
-
-            var customerGrain = _client.GetGrain<ICustomerGrain>(5);
-            var customer = await customerGrain.GetCustomer();
-            return customer;
-        }
+        }        
     }
 }

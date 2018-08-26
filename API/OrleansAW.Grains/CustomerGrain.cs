@@ -24,7 +24,7 @@ namespace OrleansAW.Grains
         {
             using (IDbConnection db = new SqlConnection(_configuration.GetConnectionString("AzureDatabase")))
             {
-                _customer = (db.Query<Customer>($"Select * from SalesLT.Customer where CustomerID = {this.GetPrimaryKeyLong()}")).FirstOrDefault();
+                _customer = db.Query<Customer>($"Select * from SalesLT.Customer where CustomerID = {this.GetPrimaryKeyLong()}").FirstOrDefault();
             }
             return base.OnActivateAsync();
         }
