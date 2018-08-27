@@ -29,8 +29,13 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowSpecificOrigin",
+                    builder => builder.WithOrigins("http://localhost:3000"));
+            });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
-            services.AddSingleton<IClusterClient>(CreateClusterClient);
+            services.AddSingleton(CreateClusterClient);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -40,7 +45,7 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseCors("AllowSpecificOrigin");
             app.UseMvc();
         }
 
@@ -48,8 +53,6 @@ namespace API
         {
             var log = serviceProvider.GetService<ILogger<Startup>>();
 
-            // TODO replace with your connection string
-            // const string connectionString = "YOUR_CONNECTION_STRING_HERE";
             var client = new ClientBuilder()
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(IStartupGrain).Assembly))
                 .ConfigureApplicationParts(parts => parts.AddApplicationPart(typeof(StartupGrain).Assembly))
@@ -58,7 +61,6 @@ namespace API
                     options.ClusterId = Constants.ClusterId;
                     options.ServiceId = Constants.ServiceId;
                 })
-               // .UseAzureStorageClustering(options => options.ConnectionString = connectionString)
                .UseLocalhostClustering()
                .Build();
 

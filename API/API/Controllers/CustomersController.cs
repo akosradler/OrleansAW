@@ -22,7 +22,6 @@ namespace API.Controllers
         [Route("/")]
         public async Task<ActionResult<string>> GetCustomers()
         {
-
             var customersGrain = _client.GetGrain<ICustomersGrain>(0);
             var customers = await customersGrain.GetCustomers();
             return JsonConvert.SerializeObject(customers);
