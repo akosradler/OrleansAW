@@ -32,7 +32,9 @@ namespace API
             services.AddCors(options =>
             {
                 options.AddPolicy("AllowSpecificOrigin",
-                    builder => builder.WithOrigins("http://localhost:3000"));
+                    builder => builder.WithOrigins("http://localhost:3000")
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
             });
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton(CreateClusterClient);

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Concurrency;
 using OrleansAW.Grains.Interfaces;
@@ -17,9 +18,10 @@ namespace OrleansAW.Grains
     class CustomersGrain : Grain, ICustomersGrain
     {
         private IConfiguration _configuration;
-        private int[] _customerIds;
+        private IEnumerable<int> _customerIds;
+        private ILogger _logger;
 
-        public CustomersGrain(IConfiguration configuration)
+        public CustomersGrain(IConfiguration configuration, ILogger logger)
         {
             _configuration = configuration;
         }
@@ -28,7 +30,14 @@ namespace OrleansAW.Grains
         {
             using (IDbConnection db = new SqlConnection(_configuration.GetConnectionString("AzureDatabase")))
             {
-                _customerIds = db.Query<int[]>($"Select CustomerID from SalesLT.Customer").FirstOrDefault();
+                try
+                {
+                    _customerIds = db.Query<int>($"Select CustomerID from SalesLT.Customer");
+                }
+                catch (Exception e)
+                {
+                    _logger.LogError($"SQL Error: {e.Message}");
+                }
             }
             return base.OnActivateAsync();
         }

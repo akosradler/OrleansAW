@@ -19,25 +19,22 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Route("/")]
-        public async Task<ActionResult<string>> GetCustomers()
+        public async Task<ActionResult<string>> Get()
         {
             var customersGrain = _client.GetGrain<ICustomersGrain>(0);
             var customers = await customersGrain.GetCustomers();
             return JsonConvert.SerializeObject(customers);
         }
 
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<ActionResult<string>> GetCustomer(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<string>> Get(int id)
         {
             var customerGrain = _client.GetGrain<ICustomerGrain>(id);
             var customer = await customerGrain.GetCustomer();
             return JsonConvert.SerializeObject(customer);
         }
 
-        [HttpPut]
-        [Route("/")]
+        [HttpPost]
         public async Task<ActionResult<bool>> AddCustomer([FromBody] Customer customer)
         {
             var customerManagerGrain = _client.GetGrain<ICustomerManagerGrain>(0);

@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Orleans;
 using Orleans.Concurrency;
 using OrleansAW.Grains.Interfaces;
@@ -17,18 +18,26 @@ namespace OrleansAW.Grains
     public class CustomerManagerGrain : Grain, ICustomerManagerGrain
     {
         private IConfiguration _configuration;
-        public CustomerManagerGrain(IConfiguration configuration)
+        private ILogger _logger;
+        public CustomerManagerGrain(IConfiguration configuration, ILogger logger)
         {
             _configuration = configuration;
         }
 
         public async Task<bool> AddCustomer(Customer customer)
         {
-            int rowsChanged;
+            int rowsChanged = 0;
             using (IDbConnection db = new SqlConnection(_configuration.GetConnectionString("AzureDatabase")))
             {
-                rowsChanged = db.Execute($"INSERT INTO SalesLT.Customer (Title, FirstName, LastName, EmailAddress, Phone, PasswordHash, PasswordSalt) " +
-                    $"VALUES('Mr.', {customer.FirstName}, {customer.LastName}, {customer.EmailAddress}, {customer.Phone}, '1234', '1234')");
+                try
+                {
+                    rowsChanged = await db.ExecuteAsync($"INSERT INTO SalesLT.Customer (Title, FirstName, LastName, EmailAddress, Phone, PasswordHash, PasswordSalt) " +
+                        $"VALUES('Mr.', \'{customer.FirstName}\', \'{customer.LastName}\', \'{customer.EmailAddress}\', \'{customer.Phone}\', '1234', '1234')");
+                }
+                catch(Exception e)
+                {
+                    _logger.LogError($"SQL Error: {e.Message}");
+                }
             }
             return await Task.FromResult(rowsChanged == 1);
         }
