@@ -19,7 +19,7 @@ namespace OrleansAW.Grains
     {
         private IConfiguration _configuration;
         private ILogger _logger;
-        public CustomerManagerGrain(IConfiguration configuration, ILogger logger)
+        public CustomerManagerGrain(IConfiguration configuration, ILogger<CustomerManagerGrain> logger)
         {
             _configuration = configuration;
         }

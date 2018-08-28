@@ -21,7 +21,7 @@ namespace OrleansAW.Grains
         private IEnumerable<int> _customerIds;
         private ILogger _logger;
 
-        public CustomersGrain(IConfiguration configuration, ILogger logger)
+        public CustomersGrain(IConfiguration configuration, ILogger<CustomersGrain> logger)
         {
             _configuration = configuration;
         }

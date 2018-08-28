@@ -18,7 +18,7 @@ namespace OrleansAW.Grains
         private IConfiguration _configuration;
         private ILogger _logger;
 
-        public CustomerGrain(IConfiguration configuration, ILogger logger)
+        public CustomerGrain(IConfiguration configuration, ILogger<CustomerGrain> logger)
         {
             _configuration = configuration;
             _logger = logger;
